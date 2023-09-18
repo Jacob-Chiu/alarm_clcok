@@ -4,7 +4,7 @@ void setup(){
   pinMode(dingerPin, OUTPUT);
   initializeClock();
   initializeDisplays();
-  initializeToasters;
+  initializeToasters();
   initializeEncoder();
 }
 

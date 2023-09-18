@@ -14,6 +14,10 @@ void userInputDetected(){
   }
 }
 
+static int compare(const void *a, const void *b) {
+  return ((struct Flyer *)a)->depth - ((struct Flyer *)b)->depth;
+}
+
 void initializeToasters(){
   for(int i=0; i<N_FLYERS; i++) {  // Randomize initial flyer states
     flyer[i].x     = (-32 + random(160)) * 16;
@@ -22,10 +26,6 @@ void initializeToasters(){
     flyer[i].depth = 10 + random(16);             // Speed / stacking order
   }
   qsort(flyer, N_FLYERS, sizeof(struct Flyer), compare); // Sort depths
-}
-
-static int compare(const void *a, const void *b) {
-  return ((struct Flyer *)a)->depth - ((struct Flyer *)b)->depth;
 }
 
 void updateToasters(){
