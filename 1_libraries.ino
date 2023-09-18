@@ -4,7 +4,7 @@
 
 //Wifi
 #include <ESP8266WiFi.h>
-#include <WifiInfo.h> //this header file contains my Wifi SSID/password which I won't share with you
+#include <WifiInfo.h> //this header file is located at /Arduino/libraries/WifiInfo and contains my Wifi SSID/password which I won't share with you.
 
 //IR remote
 #include <IRremoteESP8266.h>
@@ -26,6 +26,6 @@
 #ifdef U8X8_HAVE_HW_SPI
 #include <SPI.h>
 #endif
-#ifdef U8X8_HAVE_HW_I2C
-#include <Wire.h>
-#endif
+
+//Serialwombat
+#include <SerialWombat.h>

@@ -2,12 +2,33 @@
  * https://learn.adafruit.com/animated-flying-toaster-oled-jewelry/code
  */
 
+void userInputDetected(){
+  lastAction = millis();
+  if(displayOn && screensaverOn){
+    screensaverOn = false;
+    if(menuOn){
+      drawMenu();
+    }else{
+      drawStatus();
+    }
+  }
+}
+
+void initializeToasters(){
+  for(int i=0; i<N_FLYERS; i++) {  // Randomize initial flyer states
+    flyer[i].x     = (-32 + random(160)) * 16;
+    flyer[i].y     = (-32 + random( 96)) * 16;
+    flyer[i].frame = random(3) ? random(4) : 255; // 66% toaster, else toast
+    flyer[i].depth = 10 + random(16);             // Speed / stacking order
+  }
+  qsort(flyer, N_FLYERS, sizeof(struct Flyer), compare); // Sort depths
+}
+
 static int compare(const void *a, const void *b) {
   return ((struct Flyer *)a)->depth - ((struct Flyer *)b)->depth;
 }
 
 void updateToasters(){
-  
   int i, f;
   int x, y;
   boolean resort = false;     // By default, don't re-sort depths
@@ -44,4 +65,5 @@ void updateToasters(){
   }
   // If any items were 'rebooted' to new position, re-sort all depths
   if(resort) qsort(flyer, N_FLYERS, sizeof(struct Flyer), compare);
+  delay(toasterDelay);
 }

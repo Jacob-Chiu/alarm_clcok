@@ -2,6 +2,7 @@
 const byte dingerPin = 16;
 const byte lcdBacklightPin = 12;
 const byte IR_RECEIVE_PIN = 2;
+const byte encoderSwPin = 3;
 
 //IR
 decode_results results;
@@ -34,7 +35,7 @@ String months[12] = {"January", "February", "March", "April", "May", "June", "Ju
 
 //displays
 Adafruit_7segment matrix = Adafruit_7segment();
-U8G2_ST7920_128X64_F_SW_SPI u8g2(U8G2_R0, /* clock=*/ 14, /* data=*/ 13, /* CS=*/ 15, /* reset=*/ 16); // Feather HUZZAH ESP8266, E=clock=14, RW=data=13, RS=CS
+U8G2_ST7920_128X64_F_HW_SPI u8g2(U8G2_R0, /* CS=*/ 15);
 bool displayOn = true;
 int bright = 10;
 const int clockBrightLevel[11] = {0, 1, 2, 3, 4, 5, 6, 7, 9, 12, 15};
@@ -49,7 +50,24 @@ struct Flyer {       // Array of flying things
 } flyer[N_FLYERS];
 unsigned long lastAction = millis();
 bool screensaverOn = false;
-unsigned long screensaverPeriod = 1000*60*5;
+unsigned long screensaverPeriod = 5000;
+int toasterDelay = 200;
 
 //status screen
 int statusScreen = 0; //0 = Chiu Enterprises, 1 = date, 2 = second
+
+//SerialWombat
+SerialWombatChip sw6C;    //Declare a Serial Wombat chip
+SerialWombatQuadEnc qeWithPullUps(sw6C); //declare the encoder
+int currentSelect = 0;
+int currentFirst = 0;
+int currentMenuNumber = 0;
+int currentMenuLength = 0;
+bool encoderSwState = false;
+bool prevEncoderSwState = false;
+int encoderAmountUp = 0;
+
+bool menuOn = false;
+
+//misc
+String serialCommand = "";

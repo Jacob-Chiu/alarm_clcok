@@ -8,6 +8,7 @@ bool readIr(){
     irCode = String(results.command);
     irrecv.resume();
     if(prevIrCode != irCode || millis() - pressTime > 125){ //make sure it isn't reading the same button twice in a row
+      Serial.print("received IR code: ");
       Serial.println(irCode);
       return(true);
     }
@@ -25,17 +26,28 @@ void obeyIr(){
     }else{
       brightOff();
     }
-  }else if(irCode == "23" && displayOn){ //vol up
-    brightUp();
-  }else if(irCode == "22" && displayOn){ //vol down
-    brightDown();
-  }else if(irCode == "78" && displayOn){ //up
-    statusScreen += 1;
-    statusScreen = statusScreen % 3;
-    drawStatus();
-  }else if(irCode == "79" && displayOn){ //down
-    statusScreen += 2; //This is the same as subtracting 1 after doing mod. In arduino, mod doesn't work with negative numbers.
-    statusScreen = statusScreen % 3;
-    drawStatus();
+  }else if(displayOn){
+    if(irCode == "23"){ //vol up
+      brightUp();
+    }else if(irCode == "22"){ //vol down
+      brightDown();
+    }else if(menuOn){
+      if(irCode == "78"){ //up
+        changeMenuPos(-1);
+      }else if(irCode == "79"){ //down
+        changeMenuPos(1);
+      }else if(irCode == "5"){//center
+        (*obeyArray[currentMenuNumber])();
+      }
+    }else{
+      if(irCode == "78"){ //up
+        changeStatus(1);
+      }else if(irCode == "79"){ //down
+        changeStatus(-1);
+      }else if(irCode == "5"){//center
+        menuOn = true;
+        setMenu("home");
+      }
+    }
   }
 }

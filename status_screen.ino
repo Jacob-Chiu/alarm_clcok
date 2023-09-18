@@ -36,3 +36,13 @@ void updateStatus(){
     drawStatus();
   }
 }
+
+void changeStatus(int amount){
+  if(amount > 0){
+    statusScreen += amount;
+  }else{
+    statusScreen += (2 * (-1 * amount));
+  }
+  statusScreen = statusScreen % 3;
+  drawStatus();
+}
