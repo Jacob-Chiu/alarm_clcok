@@ -2,26 +2,26 @@
  * https://www.makerguides.com/ir-receiver-remote-arduino-tutorial/
  */
 
-bool readIr(){
+void readIr(bool act){
   if (irrecv.decode(&results)){ //if something was read
     prevIrCode = irCode;
     irCode = String(results.command);
     irrecv.resume();
     if(prevIrCode != irCode || millis() - pressTime > 125){ //make sure it isn't reading the same button twice in a row
-      Serial.print("received IR code: ");
-      Serial.println(irCode);
-      return(true);
+      if(act){
+        Serial.print("received IR code: ");
+        Serial.println(irCode);
+        obeyIr();
+      }
+      userInputDetected();
     }
-  pressTime = millis();
   }
-  return(false);
 }
 
 
 void obeyIr(){
   if(irCode == "30"){ //on
-    displayOn = !displayOn;
-    if(displayOn){
+    if(!displayOn){
       brightOn();
     }else{
       brightOff();

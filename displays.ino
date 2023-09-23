@@ -34,14 +34,14 @@ void brightDown(){
 }
 
 void brightOn(){
-  matrix.print((twelveHr*100)+mn, DEC); //Print the time on the display
-  matrix.writeDigitRaw(2, 0x02);
-  matrix.writeDisplay();
+  displayOn = true;
+  displayTime();
   analogWrite(lcdBacklightPin, lcdBrightLevel[bright]);
   drawStatus();
 }
 
 void brightOff(){
+  displayOn = false;
   matrix.clear();
   matrix.writeDisplay();
   analogWrite(lcdBacklightPin, 0);

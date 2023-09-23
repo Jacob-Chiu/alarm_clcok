@@ -7,30 +7,39 @@ void initializeEncoder(){
   sw6C.pinMode(encoderSwPin, INPUT_PULLUP);
 }
 
-void readEncoder(){
+void readEncoder(bool act){
   encoderAmountUp = (qeWithPullUps.read() - 32768)/2;
   if(encoderAmountUp != 0){//see if encoder was twisted
-    if(menuOn){
-      changeMenuPos(encoderAmountUp);
-    }else{
-      changeStatus(encoderAmountUp);
+    if(act){
+      if(!displayOn){
+        brightOn();
+      }else if(menuOn){
+        changeMenuPos(encoderAmountUp);
+      }else{
+        changeStatus(encoderAmountUp);
+      }
     }
     qeWithPullUps.write(32768);
     userInputDetected();
   }
-  
+
   prevEncoderSwState = encoderSwState;
   encoderSwState = sw6C.digitalRead(encoderSwPin);
   
   if(!encoderSwState && prevEncoderSwState){ //if encoderSwState is false, the button has been pushed
-    userInputDetected();
-    if(menuOn){
-      (*obeyArray[currentMenuNumber])();
-    }else{
-      menuOn = true;
-      setMenu("home");
+    if(act){
+      if(!displayOn){
+        brightOn();
+      }else if(menuOn){
+        (*obeyArray[currentMenuNumber])();
+      }else{
+        menuOn = true;
+        setMenu("home");
+      }
     }
+    userInputDetected();
   }
+ 
 }
 
 void drawSelector(int x) { //does not send buffer
@@ -91,15 +100,12 @@ void drawMenu() {
   u8g2.sendBuffer();
 }
 
-bool changeMenuPos(int num) {
+void changeMenuPos(int num) {
   if(currentSelect == currentMenuLength - 1 && num > 0){
-    return(false);
+    return;
   }else if(currentSelect == 0 && num < 0){
-    return(false);
-  }else if(num == 0){
-    return(true);
+    return;
   }
-
   currentSelect = currentSelect + num;
   if(currentSelect > currentMenuLength - 1){
     currentSelect = currentMenuLength - 1;
@@ -113,5 +119,5 @@ bool changeMenuPos(int num) {
     currentFirst = currentSelect;
   }
   drawMenu();
-  return(true);
+  return;
 }

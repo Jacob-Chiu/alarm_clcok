@@ -16,6 +16,7 @@ WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "pool.ntp.org");
 
 RtcDS3231<TwoWire> rtcObject(Wire);
+RtcDateTime currentTime;
 
 int sc; //second
 time_t epochTime;
@@ -28,7 +29,7 @@ int currentMonth; //month number
 String monthName; //month name
 int currentYear; //year
 
-bool timeSynced = false; //if timesync by ntp succeeded
+bool timeSynced = true; //if timesync by ntp succeeded
 
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 String months[12] = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
@@ -50,8 +51,8 @@ struct Flyer {       // Array of flying things
 } flyer[N_FLYERS];
 unsigned long lastAction = millis();
 bool screensaverOn = false;
-unsigned long screensaverPeriod = 5000;
-int toasterDelay = 200;
+unsigned long screensaverPeriod = 1000*60*5; //five minutes
+int toasterDelay = 200; //delay between toaster frames
 
 //status screen
 int statusScreen = 0; //0 = Chiu Enterprises, 1 = date, 2 = second
@@ -63,8 +64,8 @@ int currentSelect = 0;
 int currentFirst = 0;
 int currentMenuNumber = 0;
 int currentMenuLength = 0;
-bool encoderSwState = false;
-bool prevEncoderSwState = false;
+bool encoderSwState = true;
+bool prevEncoderSwState = true;
 int encoderAmountUp = 0;
 
 bool menuOn = false;
