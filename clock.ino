@@ -143,11 +143,11 @@ bool getNtpTime(){
     rtcObject.SetDateTime(currentTime); //configure the RTC with object
     Serial.print("RTC time synced to ");
     serialPrintTime();
-    return true;
+    return(true);
   }
   else{
     Serial.println("RTC time sync failed");
-    return false;
+    return(false);
   }
 }
 

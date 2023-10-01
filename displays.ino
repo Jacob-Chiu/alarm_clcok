@@ -37,7 +37,11 @@ void brightOn(){
   displayOn = true;
   displayTime();
   analogWrite(lcdBacklightPin, lcdBrightLevel[bright]);
-  drawStatus();
+  if(menuOn){
+    drawMenu();
+  }else{
+    drawStatus();
+  }
 }
 
 void brightOff(){

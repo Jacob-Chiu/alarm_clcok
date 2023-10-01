@@ -41,7 +41,7 @@ void changeStatus(int amount){
   if(amount > 0){
     statusScreen += amount;
   }else{
-    statusScreen += (2 * (-1 * amount));
+    statusScreen += (2 * (-1 * amount)); //mod can't handle negative numbers
   }
   statusScreen = statusScreen % 3;
   drawStatus();

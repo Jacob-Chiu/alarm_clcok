@@ -10,6 +10,8 @@ void initializeEncoder(){
 void readEncoder(bool act){
   encoderAmountUp = (qeWithPullUps.read() - 32768)/2;
   if(encoderAmountUp != 0){//see if encoder was twisted
+    qeWithPullUps.write(32768);
+    userInputDetected();
     if(act){
       if(!displayOn){
         brightOn();
@@ -19,14 +21,13 @@ void readEncoder(bool act){
         changeStatus(encoderAmountUp);
       }
     }
-    qeWithPullUps.write(32768);
-    userInputDetected();
   }
 
   prevEncoderSwState = encoderSwState;
   encoderSwState = sw6C.digitalRead(encoderSwPin);
   
   if(!encoderSwState && prevEncoderSwState){ //if encoderSwState is false, the button has been pushed
+     userInputDetected();
     if(act){
       if(!displayOn){
         brightOn();
@@ -37,7 +38,6 @@ void readEncoder(bool act){
         setMenu("home");
       }
     }
-    userInputDetected();
   }
  
 }

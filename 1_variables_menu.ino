@@ -1,14 +1,15 @@
-String menus[7][12] = {
-  {"Back", "Alarm", "Timer"},
+String menus[8][12] = {
+  {"Back", "Alarm", "Timer", "Control"},
   {"Back", "Set", "Manage"},
   {"Back", "Year", "Month", "Day", "Time", "Repeat", "Message", "test", "test II", "etc"},
   {"Back", "Year", "Month", "Day", "Time", "Repeat", "Message"},
   {"Back", "Set", "Manage"},
   {"Back", "Year", "Month", "Day", "Time", "Repeat", "Message"},
-  {"Back", "Year", "Month", "Day", "Time", "Repeat", "Message"}
+  {"Back", "Year", "Month", "Day", "Time", "Repeat", "Message"},
+  {"Back", "Off", "Screensaver", "Reset"}
 };
 
-String menuNames[7] = {"home", "timer", "timerSet", "timerManage", "alarm", "alarmSet", "alarmManage"};
+String menuNames[8] = {"home", "timer", "timerSet", "timerManage", "alarm", "alarmSet", "alarmManage", "control"};
 
 void obeyHome(){
   switch(currentSelect){
@@ -21,6 +22,9 @@ void obeyHome(){
       break;
     case 2:
       setMenu("timer");
+      break;
+    case 3:
+      setMenu("control");
       break;
   }
 }
@@ -159,5 +163,22 @@ void obeyAlarmManage(){
       break;
   }
 }
+void obeyControl(){
+  switch(currentSelect){
+    case 0:
+      setMenu("home");
+      break;
+    case 1:
+      brightOff();
+      break;
+    case 2:
+      screensaverOn = true;
+      break;
+    case 3: 
+      Serial.println("resetting...");
+      ESP.reset();
+      break;
+  }
+}
 
-void (*obeyArray[7])() = {obeyHome, obeyTimer, obeyTimerSet, obeyTimerManage, obeyAlarm, obeyAlarmSet, obeyAlarmManage};
+void (*obeyArray[8])() = {obeyHome, obeyTimer, obeyTimerSet, obeyTimerManage, obeyAlarm, obeyAlarmSet, obeyAlarmManage, obeyControl};
