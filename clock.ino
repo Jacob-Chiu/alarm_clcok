@@ -55,6 +55,7 @@ void initializeClock(){
     timeClient.setTimeOffset(-28800);
   }
   getNtpTime();
+  lastAction = now();
 }
 
 void displayTime(){
@@ -67,16 +68,16 @@ void serialPrintTime(time_t epoch = now()){
   Serial.print(dayStr(weekday(epoch)));
   Serial.print(", ");
   
-  Serial.print(year());
+  Serial.print(year(epoch));
   Serial.print("-");
   
-  if(month()<10){ //print 10:06 instead of 10:6
+  if(month(epoch)<10){ //print 10:06 instead of 10:6
     Serial.print(0);
   }
   Serial.print(month(epoch));
   Serial.print("-");
   
-  if(day()<10){ //print 10:06 instead of 10:6
+  if(day(epoch)<10){ //print 10:06 instead of 10:6
     Serial.print(0);
   }
   Serial.print(day(epoch));
@@ -91,7 +92,7 @@ void serialPrintTime(time_t epoch = now()){
   Serial.print(minute(epoch));
   Serial.print(":");
   
-  if(second()<10){ //see above
+  if(second(epoch)<10){ //see above
     Serial.print(0);
   }
   Serial.print(second(epoch));
@@ -105,14 +106,15 @@ void serialPrintTime(time_t epoch = now()){
 
 void getRtcTime(){
   currentTime = rtcObject.GetDateTime();
-  setTime(currentTime.Hour(),currentTime.Minute(),currentTime.Second(),currentTime.Day(),currentTime.Month(),currentTime.Year());
+  setTime(currentTime.Epoch32Time());
 }
 
 void getNtpTime(){
   if(WiFi.status() == WL_CONNECTED){
     timeClient.update();
     setTime(timeClient.getEpochTime());
-    currentTime = RtcDateTime(now()); //define date and time object from year to second
+    currentTime.InitWithEpoch32Time(now());
+    //currentTime = RtcDateTime(now()); //define date and time object from year to second
     rtcObject.SetDateTime(currentTime); //configure the RTC with object
     Serial.print("RTC time synced to ");
     serialPrintTime();
@@ -138,6 +140,7 @@ void dstUpdate(){
   }
   Serial.print("Daylight savings time adjusted to ");
   serialPrintTime();
-  currentTime = RtcDateTime(now());
+  //currentTime = RtcDateTime(now());
+  currentTime.InitWithEpoch32Time(now());
   rtcObject.SetDateTime(currentTime);
 }

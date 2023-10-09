@@ -21,9 +21,6 @@ RtcDateTime currentTime;
 bool timeSynced = true; //if timesync by ntp succeeded
 time_t lastSync = 0;
 
-char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-String months[12] = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
-
 //displays
 Adafruit_7segment matrix = Adafruit_7segment();
 U8G2_ST7920_128X64_F_HW_SPI u8g2(U8G2_R0, /* CS=*/ 15);
