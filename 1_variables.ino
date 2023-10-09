@@ -18,18 +18,8 @@ NTPClient timeClient(ntpUDP, "pool.ntp.org");
 RtcDS3231<TwoWire> rtcObject(Wire);
 RtcDateTime currentTime;
 
-int sc; //second
-time_t epochTime;
-int hr; //hour
-int twelveHr; //hour, in 12 hour time. ex. 13:00 = 1:00
-int mn; //minute
-String weekDay; //Monday, Tuesday, etc.
-int monthDay; //day of the month i.e. 12
-int currentMonth; //month number
-String monthName; //month name
-int currentYear; //year
-
 bool timeSynced = true; //if timesync by ntp succeeded
+time_t lastSync = 0;
 
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 String months[12] = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
@@ -49,9 +39,9 @@ struct Flyer {       // Array of flying things
   int  depth;     // Stacking order is also speed, 12-24 subpixels/frame
   byte frame;     // Animation frame; Toasters cycle 0-3, Toast=255
 } flyer[N_FLYERS];
-unsigned long lastAction = millis();
+time_t lastAction = 0; //last action epoch time
 bool screensaverOn = false;
-unsigned long screensaverPeriod = 1000*60*5; //five minutes
+int screensaverPeriod = 60*5; //five minutes
 int toasterDelay = 200; //delay between toaster frames
 
 //status screen

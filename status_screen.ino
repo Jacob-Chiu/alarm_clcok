@@ -9,11 +9,11 @@ void drawStatus(){
     u8g2.setDrawColor(1);
     u8g2.setFontPosTop();
     u8g2.setFontDirection(0);
-    centerText(monthName.substring(0,3) + String(" ") + String(monthDay), 34); //display the date
-    if(weekDay == "Wednesday"){
+    centerText(String(monthStr(month())).substring(0,3) + String(" ") + String(day()), 34); //display the date
+    if(weekday() == 4){
       u8g2.setFont(u8g2_font_helvB14_tr);
     }
-    centerText(weekDay, 5);
+    centerText(dayStr(weekday()), 5);
   }else if(statusScreen == 2){
     u8g2.setFont(u8g2_font_inb57_mn);
     u8g2.setFontRefHeightExtendedText();
@@ -22,17 +22,17 @@ void drawStatus(){
     u8g2.setFontDirection(0);
     u8g2.clearBuffer();
 
-    if(sc < 10){
-      centerText(String("0") + String(sc), 0);
+    if(second() < 10){
+      centerText(String("0") + String(second()), 0);
     }else{
-      centerText(String(sc), 0);
+      centerText(String(second()), 0);
     }
   }
   u8g2.sendBuffer();
 }
 
 void updateStatus(){
-  if((statusScreen == 1 && hr == 0 && mn == 0 && sc == 0) || statusScreen == 2){
+  if((statusScreen == 1 && hour() == 0 && minute() == 0 && second() == 0) || statusScreen == 2){
     drawStatus();
   }
 }

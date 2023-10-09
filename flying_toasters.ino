@@ -3,7 +3,7 @@
  */
 
 void userInputDetected(){
-  lastAction = millis();
+  lastAction = now();
   if(displayOn && screensaverOn){
     screensaverOn = false;
     if(menuOn){

@@ -27,25 +27,27 @@ void initializeClock(){
     rtcObject.SetIsRunning(true);
   }
 
-  getNtpTime(); //so the clock knows roughly what date it is to determine whether or not it's DST
-  if((currentMonth >= 4 && currentMonth <= 10) || //between april and october
-    (currentMonth == 3 &&  
-      ((monthDay > 14) || //past the 14th of march
-      (weekDay == "Sunday" && monthDay >= 8) ||
-      (weekDay == "Monday" && monthDay >= 9) ||
-      (weekDay == "Tuesday" && monthDay >= 10) ||
-      (weekDay == "Wednesday" && monthDay >= 11) || 
-      (weekDay == "Thursday" && monthDay >= 12) ||
-      (weekDay == "Friday" && monthDay >= 13) ||
-      (weekDay == "Saturday" && monthDay >= 14))) ||
+  timeClient.update();
+  setTime(timeClient.getEpochTime()); //sync NTP time to UTC, to know roughly what the date is
+
+  if((month() >= 4 && month() <= 10) || //between april and october
+    (month() == 3 &&  
+      ((day() > 14) || //past the 14th of march
+      (weekday() == 1 && day() >= 8) ||
+      (weekday() == 2 && day() >= 9) ||
+      (weekday() == 3 && day() >= 10) ||
+      (weekday() == 4 && day() >= 11) || 
+      (weekday() == 5 && day() >= 12) ||
+      (weekday() == 6 && day() >= 13) ||
+      (weekday() == 7 && day() >= 14))) ||
     
-    (currentMonth == 11 && 
-      ((weekDay == "Monday" && monthDay <= 1) ||
-      (weekDay == "Tuesday" && monthDay <= 2) ||
-      (weekDay == "Wednesday" && monthDay <= 3) ||
-      (weekDay == "Thursday" && monthDay <= 4) ||
-      (weekDay == "Friday" && monthDay <= 5) ||
-      (weekDay == "Saturday" && monthDay <= 6))))
+    (month() == 11 && 
+      ((weekday() == 2 && day() <= 1) ||
+      (weekday() == 3 && day() <= 2) ||
+      (weekday() == 4 && day() <= 3) ||
+      (weekday() == 5 && day() <= 4) ||
+      (weekday() == 6 && day() <= 5) ||
+      (weekday() == 7 && day() <= 6))))
   {
     timeClient.setTimeOffset(-25200);
     Serial.println("DST is on");
@@ -53,60 +55,48 @@ void initializeClock(){
     timeClient.setTimeOffset(-28800);
   }
   getNtpTime();
-  WiFi.forceSleepBegin();
-  timeSynced = true;
 }
 
 void displayTime(){
-  if(hr == 0){ //convert 24-hour time to 12-hour time
-    twelveHr = 12;
-  }else if (hr <= 12){
-    twelveHr = hr;
-  }else{
-    twelveHr = hr-12;
-  }
-  matrix.print((twelveHr*100)+mn, DEC); //Print the time on the display
+  matrix.print((hour()*100)+minute(), DEC); //Print the time on the display
   matrix.writeDigitRaw(2, 0x02);
   matrix.writeDisplay();
 }
 
-void serialPrintTime(){
-  Serial.print(weekDay + ", ");
-  Serial.print(currentYear);
-  Serial.print("-");
-  Serial.print(currentMonth);
-  Serial.print("-");
-  Serial.print(monthDay);
+void serialPrintTime(time_t epoch = now()){
+  Serial.print(dayStr(weekday(epoch)));
   Serial.print(", ");
   
-  if(hr == 0){ //convert 24-hour time to 12-hour time
-    twelveHr = 12;
-  }else if (hr <= 12){
-    twelveHr = hr;
-  }else{
-    twelveHr = hr-12;
+  Serial.print(year());
+  Serial.print("-");
+  
+  if(month()<10){ //print 10:06 instead of 10:6
+    Serial.print(0);
   }
+  Serial.print(month(epoch));
+  Serial.print("-");
+  
+  if(day()<10){ //print 10:06 instead of 10:6
+    Serial.print(0);
+  }
+  Serial.print(day(epoch));
+  Serial.print(", ");
 
-  Serial.print(twelveHr);
+  Serial.print(hour(epoch));
   Serial.print(":");
   
-  if(mn<10){ //print 10:06 instead of 10:6
+  if(minute(epoch)<10){ //print 10:06 instead of 10:6
     Serial.print(0);
-    Serial.print(mn);
-  }else{
-    Serial.print(mn);
-  }  
-  
-  Serial.print(":");
-  
-  if(sc<10){ //see above
-    Serial.print(0);
-    Serial.print(sc);
-  }else{
-    Serial.print(sc);
   }
+  Serial.print(minute(epoch));
+  Serial.print(":");
   
-  if(hr <= 11){ //print am/pm
+  if(second()<10){ //see above
+    Serial.print(0);
+  }
+  Serial.print(second(epoch));
+  
+  if(isAM(epoch)){ //print am/pm
     Serial.println(" AM");
   }else{
     Serial.println(" PM");
@@ -115,50 +105,39 @@ void serialPrintTime(){
 
 void getRtcTime(){
   currentTime = rtcObject.GetDateTime();
-  currentYear = currentTime.Year();
-  currentMonth = currentTime.Month();
-  monthName = months[currentMonth - 1];
-  monthDay = currentTime.Day(); 
-  hr = currentTime.Hour();
-  mn = currentTime.Minute();
-  sc = currentTime.Second();
-  setTime(hr,mn,sc,monthDay,currentMonth,currentYear);
-  weekDay = daysOfTheWeek[weekday() - 1];
+  setTime(currentTime.Hour(),currentTime.Minute(),currentTime.Second(),currentTime.Day(),currentTime.Month(),currentTime.Year());
 }
 
-bool getNtpTime(){
+void getNtpTime(){
   if(WiFi.status() == WL_CONNECTED){
     timeClient.update();
-    hr = timeClient.getHours();
-    mn = timeClient.getMinutes();
-    sc = timeClient.getSeconds();
-    epochTime = timeClient.getEpochTime();
-    monthDay = day(epochTime);
-    currentMonth = month(epochTime);
-    monthName = months[currentMonth-1];
-    currentYear = year(epochTime);
-    weekDay = daysOfTheWeek[weekday(epochTime)- 1];
-    
-    currentTime = RtcDateTime(currentYear-2000, currentMonth, monthDay, hr, mn, sc); //define date and time object from year to second
+    setTime(timeClient.getEpochTime());
+    currentTime = RtcDateTime(now()); //define date and time object from year to second
     rtcObject.SetDateTime(currentTime); //configure the RTC with object
     Serial.print("RTC time synced to ");
     serialPrintTime();
-    return(true);
-  }
-  else{
-    Serial.println("RTC time sync failed");
-    return(false);
+    lastSync = now();
+    WiFi.forceSleepBegin();
+    timeSynced = true;
+  }else{
+    Serial.println("Wifi was not connected, getting RTC time instead");
+    getRtcTime();
+    timeSynced = false;
   }
 }
 
 void dstUpdate(){
-  if(currentMonth == 3 && weekDay == "Sunday" && monthDay >= 8 && monthDay <= 14){ //Daylight saving starts on the 2nd Sunday of march
-    const long utcOffsetInSeconds = -25200;
-    timeClient.setTimeOffset(utcOffsetInSeconds);
-    currentTime = RtcDateTime(currentYear-2000, currentMonth, monthDay, hr+1, mn, sc); //Spring forward 1 hour
-  }else if (currentMonth == 11 && weekDay == "Sunday" && monthDay <= 7){ //It ends on the 1st sunday of November
-    const long utcOffsetInSeconds = -28800;
-    timeClient.setTimeOffset(utcOffsetInSeconds);
-    currentTime = RtcDateTime(currentYear-2000, currentMonth, monthDay, hr-1, mn, sc); //Fall back 1 hour
+  if(month() == 3 && weekday() == 1 && day() >= 8 && day() <= 14){ //Daylight saving starts on the 2nd Sunday of march
+    timeClient.setTimeOffset(-25200);
+    adjustTime(60*60);
+  }else if (month() == 11 && weekday() == 1 && day() <= 7){ //It ends on the 1st sunday of November
+    timeClient.setTimeOffset(-28800);
+    adjustTime(-60*60);
+  }else{
+    return; //exits function immediately
   }
+  Serial.print("Daylight savings time adjusted to ");
+  serialPrintTime();
+  currentTime = RtcDateTime(now());
+  rtcObject.SetDateTime(currentTime);
 }
