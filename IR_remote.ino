@@ -28,9 +28,9 @@ void obeyIr(){
     }
   }else if(displayOn){
     if(irCode == "23"){ //vol up
-      brightUp();
+      changeBright(1);
     }else if(irCode == "22"){ //vol down
-      brightDown();
+      changeBright(-1);
     }else if(menuOn){
       if(irCode == "78"){ //up
         changeMenuPos(-1);

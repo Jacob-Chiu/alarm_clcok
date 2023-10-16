@@ -4,7 +4,7 @@ void initializeEncoder(){
   sw6C.begin(Wire, 0x6C); //Initialize the Serial Wombat library to use the primary I2C port, SerialWombat is address 6C
   qeWithPullUps.begin(1,2);  // Initialize a QE on pins 1 and 2
   qeWithPullUps.write(32768); //sets current position to 10
-  sw6C.pinMode(encoderSwPin, INPUT_PULLUP);
+  sw6C.pinMode(ENCODER_SW_PIN, INPUT_PULLUP);
 }
 
 void readEncoder(bool act){
@@ -24,7 +24,7 @@ void readEncoder(bool act){
   }
 
   prevEncoderSwState = encoderSwState;
-  encoderSwState = sw6C.digitalRead(encoderSwPin);
+  encoderSwState = sw6C.digitalRead(ENCODER_SW_PIN);
   
   if(!encoderSwState && prevEncoderSwState){ //if encoderSwState is false, the button has been pushed
      userInputDetected();
@@ -75,8 +75,21 @@ int menuNumber(String menuName){
   }
 }
 
+String getRight(int item) {
+  switch(rightType[currentMenuNumber][item]){
+    case 0:
+      return(*(String*)right[currentMenuNumber][item]); //type String symbol
+      break;
+    case 1:
+      return(*(String*)right[currentMenuNumber][item]); //type String, normal text
+      break;
+    case 2:
+      return(String(*(int*)right[currentMenuNumber][item])); //type int
+      break;
+  }
+}
+
 void drawMenu() {
-  u8g2.setFont(u8g2_font_6x10_tf);
   u8g2.setFontRefHeightExtendedText();
   u8g2.setDrawColor(1);
   u8g2.setFontPosTop();
@@ -85,14 +98,19 @@ void drawMenu() {
   u8g2.setFont(u8g2_font_6x10_tf);
   for(int i = 0; i < 6 && currentFirst + i < currentMenuLength; i++) {
     u8g2.drawStr(1, i * 10, menus[currentMenuNumber][currentFirst + i].c_str());
+    if(rightType[currentMenuNumber][currentFirst+i] != 0){
+      rightText(getRight(currentFirst + i), i*10, 5);
+    }
   }
     
   u8g2.setFont(u8g2_font_unifont_t_symbols);
   for(int i = 0; i < 6 && currentFirst + i < currentMenuLength; i++){
-    if(menus[currentMenuNumber][currentFirst + i] == "Back"){
-      u8g2.drawUTF8(115, (i * 10) - 2, "↶");
-    }else{
-      u8g2.drawUTF8(115, i * 10, "→");
+    if(rightType[currentMenuNumber][currentFirst+i] == 0){
+      if(getRight(currentFirst + i) == "↶"){
+        u8g2.drawUTF8(115, (i * 10) - 2, "↶");
+      }else{
+        u8g2.drawUTF8(115, i * 10, getRight(currentFirst+i).c_str());
+      }
     }
   }
   

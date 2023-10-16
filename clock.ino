@@ -11,6 +11,7 @@ void initializeClock(){
     Serial.print ( "." );
   }
   Serial.println("Wifi Connected");
+  
   timeClient.begin();
   
   rtcObject.Begin();     //Starts rtc
@@ -59,7 +60,7 @@ void initializeClock(){
 }
 
 void displayTime(){
-  matrix.print((hour()*100)+minute(), DEC); //Print the time on the display
+  matrix.print((hourFormat12()*100)+minute(), DEC); //Print the time on the display
   matrix.writeDigitRaw(2, 0x02);
   matrix.writeDisplay();
 }
@@ -83,7 +84,7 @@ void serialPrintTime(time_t epoch = now()){
   Serial.print(day(epoch));
   Serial.print(", ");
 
-  Serial.print(hour(epoch));
+  Serial.print(hourFormat12(epoch));
   Serial.print(":");
   
   if(minute(epoch)<10){ //print 10:06 instead of 10:6

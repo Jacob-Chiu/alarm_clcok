@@ -1,8 +1,8 @@
 //pins
-const byte dingerPin = 16;
-const byte lcdBacklightPin = 12;
+const byte DINGER_PIN = 16;
+const byte LCD_BACKLIGHT_PIN = 12;
 const byte IR_RECEIVE_PIN = 2;
-const byte encoderSwPin = 3;
+const byte ENCODER_SW_PIN = 3;
 
 //IR
 decode_results results;
@@ -26,16 +26,16 @@ Adafruit_7segment matrix = Adafruit_7segment();
 U8G2_ST7920_128X64_F_HW_SPI u8g2(U8G2_R0, /* CS=*/ 15);
 bool displayOn = true;
 int bright = 10;
-const int clockBrightLevel[11] = {0, 1, 2, 3, 4, 5, 6, 7, 9, 12, 15};
-const int lcdBrightLevel[11] = {22, 46, 69, 92, 115, 139, 162, 185, 208, 232, 255};
+const byte CLOCK_BRIGHT_LEVEL[11] = {0, 1, 2, 3, 4, 5, 6, 7, 9, 12, 15};
+const byte LCD_BRIGHT_LEVEL[11] = {22, 46, 69, 92, 115, 139, 162, 185, 208, 232, 255};
 
 //toasters
-#define N_FLYERS   5 // Number of flying things
-struct Flyer {       // Array of flying things
+const byte NUM_TOASTERS = 5; // Number of flying things
+struct Toaster {       // Array of flying things
   int x, y;      // Top-left position * 16 (for subpixel pos updates)
   int  depth;     // Stacking order is also speed, 12-24 subpixels/frame
   byte frame;     // Animation frame; Toasters cycle 0-3, Toast=255
-} flyer[N_FLYERS];
+} toaster[NUM_TOASTERS];
 time_t lastAction = 0; //last action epoch time
 bool screensaverOn = false;
 int screensaverPeriod = 60*5; //five minutes

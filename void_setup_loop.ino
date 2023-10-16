@@ -1,7 +1,7 @@
 void setup(){
   Serial.begin(115200);
   Wire.begin();
-  pinMode(dingerPin, OUTPUT);
+  pinMode(DINGER_PIN, OUTPUT);
   initializeClock();
   initializeDisplays();
   initializeToasters();

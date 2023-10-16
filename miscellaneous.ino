@@ -8,7 +8,8 @@ void readSerialCommands(){
       Serial.println("help: "); 
       Serial.println(" - 'get time' to print time"); 
       Serial.println(" - 'reset' to reset"); 
-      Serial.println(" - 'on' and 'off' to turn clock on and off"); 
+      Serial.println(" - 'on' and 'off' to turn clock on and off");
+      Serial.println(" - 'bright up' and 'bright down' to increase/decrease brightness"); 
       Serial.println(" - 'up', 'down', and 'select' to navigate"); 
       Serial.println(" - 'screensaver on' to turn the screensaver on"); 
       Serial.println(" - type anything to turn screensaver off");
@@ -25,6 +26,10 @@ void readSerialCommands(){
       brightOff();
     }else if(serialCommand.equals("on")){
       brightOn();
+    }else if(serialCommand.equals("bright up")){
+      changeBright(1);
+    }else if(serialCommand.equals("bright down")){
+      changeBright(-1);
     }else if(serialCommand.equals("up") && displayOn){
       if(menuOn){
         changeMenuPos(-1);
@@ -64,6 +69,8 @@ void readSerialCommands(){
       }else{
         Serial.println("Wifi is not connected");
       }
+    }else if(serialCommand.equals("hello")){
+      Serial.println("Hello, how are you?");
     }else{
       Serial.println("sorry, that was an invalid command");
     }

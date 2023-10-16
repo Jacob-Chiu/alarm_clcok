@@ -1,4 +1,7 @@
-String menus[8][12] = {
+const byte NUM_MENUS = 8;
+const byte NUM_MENU_ITEMS = 12;
+
+String menus[NUM_MENUS][NUM_MENU_ITEMS] = {
   {"Back", "Alarm", "Timer", "Control"},
   {"Back", "Set", "Manage"},
   {"Back", "Year", "Month", "Day", "Time", "Repeat", "Message", "test", "test II", "etc"},
@@ -6,10 +9,36 @@ String menus[8][12] = {
   {"Back", "Set", "Manage"},
   {"Back", "Year", "Month", "Day", "Time", "Repeat", "Message"},
   {"Back", "Year", "Month", "Day", "Time", "Repeat", "Message"},
-  {"Back", "Off", "Screensaver", "Reset"}
+  {"Back", "Off", "Screensaver", "Reset", "Brightness"}
 };
 
-String menuNames[8] = {"home", "timer", "timerSet", "timerManage", "alarm", "alarmSet", "alarmManage", "control"};
+String menuNames[NUM_MENUS] = {"home", "timer", "timerSet", "timerManage", "alarm", "alarmSet", "alarmManage", "control"};
+
+String inArrow = "→";
+String backArrow = "↶";
+String nothing = "";
+
+void* right[NUM_MENUS][NUM_MENU_ITEMS] = {
+  {&backArrow, &inArrow, &inArrow, &inArrow},
+  {&backArrow, &inArrow, &inArrow},
+  {&backArrow, &nothing, &nothing, &nothing, &nothing, &nothing, &nothing, &nothing, &nothing, &nothing},
+  {&backArrow, &nothing, &nothing, &nothing, &nothing, &nothing, &nothing},
+  {&backArrow, &inArrow, &inArrow},
+  {&backArrow,  &nothing, &nothing, &nothing, &nothing, &nothing, &nothing},
+  {&backArrow,  &nothing, &nothing, &nothing, &nothing, &nothing, &nothing},
+  {&backArrow, &nothing, &nothing, &nothing, &bright}
+};
+
+int rightType[NUM_MENUS][NUM_MENU_ITEMS] = {
+  {0,0,0,0},
+  {0,0,0},
+  {0,1,1,1,1,1,1,1,1,1},
+  {0,1,1,1,1,1,1},
+  {0,0,0},
+  {0,1,1,1,1,1,1},
+  {0,1,1,1,1,1,1},
+  {0,1,1,1,2}
+};
 
 void obeyHome(){
   switch(currentSelect){
@@ -181,4 +210,4 @@ void obeyControl(){
   }
 }
 
-void (*obeyArray[8])() = {obeyHome, obeyTimer, obeyTimerSet, obeyTimerManage, obeyAlarm, obeyAlarmSet, obeyAlarmManage, obeyControl};
+void (*obeyArray[NUM_MENUS])() = {obeyHome, obeyTimer, obeyTimerSet, obeyTimerManage, obeyAlarm, obeyAlarmSet, obeyAlarmManage, obeyControl};
