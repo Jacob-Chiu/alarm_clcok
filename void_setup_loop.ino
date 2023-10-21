@@ -33,7 +33,7 @@ void loop() {
       }
     }
     
-    if(now() - lastAction > screensaverPeriod && displayOn && !screensaverOn){ //turn screensaver on
+    if(now() - lastAction > SCREENSAVER_PERIOD && displayOn && !screensaverOn){ //turn screensaver on
       screensaverOn = true;
     }
   }

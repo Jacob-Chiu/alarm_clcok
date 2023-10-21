@@ -1,5 +1,6 @@
 /*
  * https://learn.adafruit.com/adafruit-led-backpack/1-2-inch-7-segment-backpack-arduino-wiring-and-setup
+ * https://github.com/olikraus/u8g2/wiki/u8g2reference
  */
 
 void initializeDisplays(){ //called once in void setup

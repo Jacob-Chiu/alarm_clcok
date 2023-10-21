@@ -38,8 +38,8 @@ struct Toaster {       // Array of flying things
 } toaster[NUM_TOASTERS];
 time_t lastAction = 0; //last action epoch time
 bool screensaverOn = false;
-int screensaverPeriod = 60*5; //five minutes
-int toasterDelay = 200; //delay between toaster frames
+const int SCREENSAVER_PERIOD = 60*5; //five minutes
+const byte TOASTER_DELAY = 200; //delay between toaster frames
 
 //status screen
 int statusScreen = 0; //0 = Chiu Enterprises, 1 = date, 2 = second

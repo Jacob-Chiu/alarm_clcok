@@ -2,16 +2,17 @@ void readSerialCommands(){
   if(Serial.available()){
     serialCommand = Serial.readStringUntil('\n');
     userInputDetected();
-    Serial.print("received Serial command: ");
+    Serial.print("Received Serial command: ");
     Serial.println(serialCommand);
     if(serialCommand.equals("help")){
-      Serial.println("help: "); 
+      Serial.println("Help: "); 
       Serial.println(" - 'get time' to print time"); 
       Serial.println(" - 'reset' to reset"); 
-      Serial.println(" - 'on' and 'off' to turn clock on and off");
-      Serial.println(" - 'bright up' and 'bright down' to increase/decrease brightness"); 
-      Serial.println(" - 'up', 'down', and 'select' to navigate"); 
-      Serial.println(" - 'screensaver on' to turn the screensaver on"); 
+      Serial.println(" - 'on' to turn clock on or redraw display");
+      Serial.println(" - 'off' to turn clock off (display must be on)");
+      Serial.println(" - 'bright up' and 'bright down' to change brightness (display must be on)"); 
+      Serial.println(" - 'up', 'down', and 'select' to navigate (display must be on)"); 
+      Serial.println(" - 'screensaver on' to turn the screensaver on (display must be on)"); 
       Serial.println(" - type anything to turn screensaver off");
       Serial.println(" - 'last sync' to get the last NTP sync");
       Serial.println(" - 'wifi status' to get wifi status");
@@ -22,13 +23,13 @@ void readSerialCommands(){
     }else if(serialCommand.equals("reset")){
       Serial.println("resetting...");
       ESP.reset();
-    }else if(serialCommand.equals("off")){
+    }else if(serialCommand.equals("off") && displayOn){
       brightOff();
     }else if(serialCommand.equals("on")){
       brightOn();
-    }else if(serialCommand.equals("bright up")){
+    }else if(serialCommand.equals("bright up") && displayOn){
       changeBright(1);
-    }else if(serialCommand.equals("bright down")){
+    }else if(serialCommand.equals("bright down") && displayOn){
       changeBright(-1);
     }else if(serialCommand.equals("up") && displayOn){
       if(menuOn){
@@ -49,7 +50,7 @@ void readSerialCommands(){
         menuOn = true;
         setMenu("home");
       }
-    }else if(serialCommand.equals("screensaver on")){
+    }else if(serialCommand.equals("screensaver on") && displayOn){
       screensaverOn = true;
     }else if (serialCommand.equals("last sync")){
       serialPrintTime(lastSync);
@@ -72,7 +73,7 @@ void readSerialCommands(){
     }else if(serialCommand.equals("hello")){
       Serial.println("Hello, how are you?");
     }else{
-      Serial.println("sorry, that was an invalid command");
+      Serial.println("Sorry, that was an invalid command. Type 'help' to get a list of commands. Check if the display is on; some commands are invalid if it's off.");
     }
   }
 }

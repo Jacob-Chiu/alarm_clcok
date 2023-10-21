@@ -26,12 +26,18 @@ void readEncoder(bool act){
   prevEncoderSwState = encoderSwState;
   encoderSwState = sw6C.digitalRead(ENCODER_SW_PIN);
   
-  if(!encoderSwState && prevEncoderSwState){ //if encoderSwState is false, the button has been pushed
-     userInputDetected();
-    if(act){
-      if(!displayOn){
-        brightOn();
-      }else if(menuOn){
+  if(!encoderSwState){ //if encoderSwState is false, the button has been pushed
+    if(prevEncoderSwState){ //when it was first pressed
+      pressTime = millis();
+    }else if(millis() - pressTime > 2000 && displayOn){ //if it has been held down > 2sec.
+      brightOff();
+    }
+  }else if(encoderSwState && !prevEncoderSwState && millis() - pressTime < 2000){ //button was released after short press
+    userInputDetected();
+    if(!displayOn){
+      brightOn();
+    }else if(act){ //short press
+      if(menuOn){
         (*obeyArray[currentMenuNumber])();
       }else{
         menuOn = true;
@@ -39,7 +45,6 @@ void readEncoder(bool act){
       }
     }
   }
- 
 }
 
 void drawSelector(int x) { //does not send buffer

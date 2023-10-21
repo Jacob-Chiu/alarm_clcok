@@ -65,5 +65,5 @@ void updateToasters(){
   }
   // If any items were 'rebooted' to new position, re-sort all depths
   if(resort) qsort(toaster, NUM_TOASTERS, sizeof(struct Toaster), compare);
-  delay(toasterDelay);
+  delay(TOASTER_DELAY);
 }

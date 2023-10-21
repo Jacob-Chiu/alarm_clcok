@@ -7,7 +7,8 @@ void readIr(bool act){
     prevIrCode = irCode;
     irCode = String(results.command);
     irrecv.resume();
-    if(prevIrCode != irCode || millis() - pressTime > 125){ //make sure it isn't reading the same button twice in a row
+    //if(prevIrCode != irCode || millis() - pressTime > 125){ //make sure it isn't reading the same button twice in a row
+    if(prevIrCode != irCode){ //make sure it isn't reading the same button twice in a row
       if(act){
         Serial.print("received IR code: ");
         Serial.println(irCode);
