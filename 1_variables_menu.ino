@@ -1,7 +1,7 @@
-const byte NUM_MENUS = 8;
+const byte NUM_MENUS = 9;
 const byte NUM_MENU_ITEMS = 12;
 
-String menus[NUM_MENUS][NUM_MENU_ITEMS] = {
+const String menus[NUM_MENUS][NUM_MENU_ITEMS] = {
   {"Back", "Alarm", "Timer", "Control"},
   {"Back", "Set", "Manage"},
   {"Back", "Year", "Month", "Day", "Time", "Repeat", "Message", "test", "test II", "etc"},
@@ -9,27 +9,29 @@ String menus[NUM_MENUS][NUM_MENU_ITEMS] = {
   {"Back", "Set", "Manage"},
   {"Back", "Year", "Month", "Day", "Time", "Repeat", "Message"},
   {"Back", "Year", "Month", "Day", "Time", "Repeat", "Message"},
-  {"Back", "Off", "Screensaver", "Reset", "Brightness"}
+  {"Back", "Off", "Screensaver", "Reset", "Brightness"},
+  {"Back", "Confirm reset"}
 };
 
-String menuNames[NUM_MENUS] = {"home", "timer", "timerSet", "timerManage", "alarm", "alarmSet", "alarmManage", "control"};
+const String menuNames[NUM_MENUS] = {"home", "timer", "timerSet", "timerManage", "alarm", "alarmSet", "alarmManage", "control", "reset"};
 
-String inArrow = "→";
-String backArrow = "↶";
-String nothing = "";
+const String inArrow = "→";
+const String backArrow = "↶";
+const String nothing = "";
 
-void* right[NUM_MENUS][NUM_MENU_ITEMS] = {
+const void* right[NUM_MENUS][NUM_MENU_ITEMS] = {
   {&backArrow, &inArrow, &inArrow, &inArrow},
   {&backArrow, &inArrow, &inArrow},
   {&backArrow, &nothing, &nothing, &nothing, &nothing, &nothing, &nothing, &nothing, &nothing, &nothing},
   {&backArrow, &nothing, &nothing, &nothing, &nothing, &nothing, &nothing},
   {&backArrow, &inArrow, &inArrow},
-  {&backArrow,  &nothing, &nothing, &nothing, &nothing, &nothing, &nothing},
-  {&backArrow,  &nothing, &nothing, &nothing, &nothing, &nothing, &nothing},
-  {&backArrow, &nothing, &nothing, &nothing, &bright}
+  {&backArrow, &nothing, &nothing, &nothing, &nothing, &nothing, &nothing},
+  {&backArrow, &nothing, &nothing, &nothing, &nothing, &nothing, &nothing},
+  {&backArrow, &nothing, &nothing, &nothing, &bright},
+  {&backArrow, &nothing}
 };
 
-int rightType[NUM_MENUS][NUM_MENU_ITEMS] = {
+const int rightType[NUM_MENUS][NUM_MENU_ITEMS] = { //0 = symbol, 1 = string, 2 = integer
   {0,0,0,0},
   {0,0,0},
   {0,1,1,1,1,1,1,1,1,1},
@@ -37,7 +39,8 @@ int rightType[NUM_MENUS][NUM_MENU_ITEMS] = {
   {0,0,0},
   {0,1,1,1,1,1,1},
   {0,1,1,1,1,1,1},
-  {0,1,1,1,2}
+  {0,1,1,1,2},
+  {0,1}
 };
 
 void obeyHome(){
@@ -204,10 +207,24 @@ void obeyControl(){
       screensaverOn = true;
       break;
     case 3: 
+      setMenu("reset");
+      break;
+    case 4:
+      editVar = !editVar;
+      drawMenu();
+      break;
+  }
+}
+void obeyReset(){
+  switch(currentSelect){
+    case 0:
+      setMenu("control");
+      break;
+    case 1:
       Serial.println("resetting...");
       ESP.reset();
       break;
   }
 }
 
-void (*obeyArray[NUM_MENUS])() = {obeyHome, obeyTimer, obeyTimerSet, obeyTimerManage, obeyAlarm, obeyAlarmSet, obeyAlarmManage, obeyControl};
+void (*obeyArray[NUM_MENUS])() = {obeyHome, obeyTimer, obeyTimerSet, obeyTimerManage, obeyAlarm, obeyAlarmSet, obeyAlarmManage, obeyControl, obeyReset};

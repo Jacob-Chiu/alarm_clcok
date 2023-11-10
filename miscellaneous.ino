@@ -16,8 +16,10 @@ void readSerialCommands(){
       Serial.println(" - type anything to turn screensaver off");
       Serial.println(" - 'last sync' to get the last NTP sync");
       Serial.println(" - 'wifi status' to get wifi status");
+      Serial.println(" - 'wifi diagnostic' to get wifi diagnostic information");
       Serial.println(" - 'wifi on' and 'wifi off' to wake/sleep wifi");
       Serial.println(" - 'sync time' to get NTP time");
+      Serial.println(" - 'print screen' to print to the serial monitor what's on the lcd");
     }else if(serialCommand.equals("get time")){
       serialPrintTime();
     }else if(serialCommand.equals("reset")){
@@ -55,11 +57,32 @@ void readSerialCommands(){
     }else if (serialCommand.equals("last sync")){
       serialPrintTime(lastSync);
     }else if(serialCommand.equals("wifi status")){
-      if(WiFi.status() == WL_CONNECTED){
-        Serial.println("on");
-      }else{
-        Serial.println("off");
+      switch(WiFi.status()){
+        case 0:
+          Serial.println("Idle (changing between statuses)");
+          break;
+        case 1:
+          Serial.println("No SSID available");
+          break;
+        case 3:
+          Serial.println("Connected");
+          break;
+        case 4:
+          Serial.println("Connection failed");
+          break;
+        case 6:
+          Serial.println("Wrong password");
+          break;
+        case 7: 
+          Serial.println("Disconnected");
+          break;
+        default:
+          Serial.print("Didn't recognize status code: ");
+          Serial.println(WiFi.status());
+          break;
       }
+    }else if (serialCommand.equals("wifi diagnostic")){
+      WiFi.printDiag(Serial);
     }else if(serialCommand.equals("wifi on")){
       WiFi.forceSleepWake();
     }else if(serialCommand.equals("wifi off")){
@@ -72,6 +95,8 @@ void readSerialCommands(){
       }
     }else if(serialCommand.equals("hello")){
       Serial.println("Hello, how are you?");
+    }else if(serialCommand.equals("print screen") && displayOn){
+      u8g2.writeBufferPBM2(Serial);
     }else{
       Serial.println("Sorry, that was an invalid command. Type 'help' to get a list of commands. Check if the display is on; some commands are invalid if it's off.");
     }

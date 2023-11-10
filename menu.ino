@@ -52,7 +52,7 @@ void drawSelector(int x) { //does not send buffer
   u8g2.drawBox(0, 10 * x, 128, 10);
 }
 
-void setMenu(String menuName){
+void setMenu(const String menuName){
   currentMenuNumber = menuNumber(menuName);
   currentMenuLength = menuLength(menus[currentMenuNumber]);
   currentSelect = 0;
@@ -60,7 +60,7 @@ void setMenu(String menuName){
   drawMenu();
 }
 
-int menuLength(String menuArray[]){
+int menuLength(const String menuArray[]){
   int count = 0;
   while(true){
     if(menuArray[count] == ""){
@@ -70,7 +70,7 @@ int menuLength(String menuArray[]){
   }
 }
 
-int menuNumber(String menuName){
+int menuNumber(const String menuName){
   int count = 0;
   while(true){
     if(menuNames[count] == menuName){
@@ -99,47 +99,58 @@ void drawMenu() {
   u8g2.setDrawColor(1);
   u8g2.setFontPosTop();
   u8g2.clearBuffer();
-  
-  u8g2.setFont(u8g2_font_6x10_tf);
-  for(int i = 0; i < 6 && currentFirst + i < currentMenuLength; i++) {
-    u8g2.drawStr(1, i * 10, menus[currentMenuNumber][currentFirst + i].c_str());
-    if(rightType[currentMenuNumber][currentFirst+i] != 0){
-      rightText(getRight(currentFirst + i), i*10, 5);
-    }
-  }
-    
-  u8g2.setFont(u8g2_font_unifont_t_symbols);
-  for(int i = 0; i < 6 && currentFirst + i < currentMenuLength; i++){
-    if(rightType[currentMenuNumber][currentFirst+i] == 0){
-      if(getRight(currentFirst + i) == "↶"){
-        u8g2.drawUTF8(115, (i * 10) - 2, "↶");
-      }else{
-        u8g2.drawUTF8(115, i * 10, getRight(currentFirst+i).c_str());
+  if(editVar){
+    u8g2.setFont(u8g2_font_6x10_tr);
+    u8g2.drawStr(5, 5, (menus[currentMenuNumber][currentSelect] + String(": ")).c_str());
+    rightText(getRight(currentSelect), 5, 5);
+  }else{
+    u8g2.setFont(u8g2_font_6x10_tf);
+    for(int i = 0; i < 6 && currentFirst + i < currentMenuLength; i++) {
+      u8g2.drawStr(1, i * 10, menus[currentMenuNumber][currentFirst + i].c_str());
+      if(rightType[currentMenuNumber][currentFirst+i] != 0){
+        rightText(getRight(currentFirst + i), i*10, 5);
       }
     }
+    u8g2.setFont(u8g2_font_unifont_t_symbols);
+    for(int i = 0; i < 6 && currentFirst + i < currentMenuLength; i++){
+      if(rightType[currentMenuNumber][currentFirst+i] == 0){
+        if(getRight(currentFirst + i) == "↶"){
+          u8g2.drawUTF8(115, (i * 10) - 2, "↶");
+        }else{
+          u8g2.drawUTF8(115, i * 10, getRight(currentFirst+i).c_str());
+        }
+      }
+    }
+    drawSelector(currentSelect - currentFirst);
   }
-  
-  drawSelector(currentSelect - currentFirst);  
   u8g2.sendBuffer();
 }
 
-void changeMenuPos(int num) {
-  if(currentSelect == currentMenuLength - 1 && num > 0){
-    return;
-  }else if(currentSelect == 0 && num < 0){
-    return;
+void updateVars(){
+  if(bright > 10){
+    bright = 10;
+  }else if(bright < 0){
+    bright = 0;
   }
-  currentSelect = currentSelect + num;
-  if(currentSelect > currentMenuLength - 1){
-    currentSelect = currentMenuLength - 1;
-  }else if(currentSelect < 0){
-    currentSelect = 0;
-  }
+  changeBright(0);
+}
 
-  if(currentFirst + 5 < currentSelect){
-    currentFirst = currentSelect - 5;
-  }else if(currentFirst > currentSelect){
-    currentFirst = currentSelect;
+void changeMenuPos(int num) {
+  if(editVar){
+    *(int*)right[currentMenuNumber][currentSelect] += num;
+    updateVars();
+  }else{
+    currentSelect += num;
+    if(currentSelect > currentMenuLength - 1){
+      currentSelect = currentMenuLength - 1;
+    }else if(currentSelect < 0){
+      currentSelect = 0;
+    }
+    if(currentFirst + 5 < currentSelect){
+      currentFirst = currentSelect - 5;
+    }else if(currentFirst > currentSelect){
+      currentFirst = currentSelect;
+    }
   }
   drawMenu();
   return;

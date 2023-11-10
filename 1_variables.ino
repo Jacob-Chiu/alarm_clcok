@@ -56,6 +56,7 @@ bool prevEncoderSwState = true;
 int encoderAmountUp = 0;
 
 bool menuOn = false;
+bool editVar = false;
 
 //misc
 String serialCommand = "";

@@ -124,6 +124,7 @@ void getNtpTime(){
     timeSynced = true;
   }else{
     Serial.println("Wifi was not connected, getting RTC time instead");
+    WiFi.forceSleepWake();
     getRtcTime();
     timeSynced = false;
   }
