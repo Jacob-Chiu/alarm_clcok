@@ -115,7 +115,6 @@ void getNtpTime(){
     timeClient.update();
     setTime(timeClient.getEpochTime());
     currentTime.InitWithEpoch32Time(now());
-    //currentTime = RtcDateTime(now()); //define date and time object from year to second
     rtcObject.SetDateTime(currentTime); //configure the RTC with object
     Serial.print("RTC time synced to ");
     serialPrintTime();
@@ -142,7 +141,6 @@ void dstUpdate(){
   }
   Serial.print("Daylight savings time adjusted to ");
   serialPrintTime();
-  //currentTime = RtcDateTime(now());
   currentTime.InitWithEpoch32Time(now());
   rtcObject.SetDateTime(currentTime);
 }

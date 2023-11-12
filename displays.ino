@@ -57,3 +57,22 @@ void rightText(String input, int height, int margin) {
   int width = u8g2.getUTF8Width(input.c_str());
   u8g2.drawUTF8(128 - width - margin, height, input.c_str());
 }
+
+//class to print display better
+class DisplayPrint : public Print{
+   public:
+      virtual size_t write(uint8_t);
+};
+
+
+size_t DisplayPrint::write(uint8_t character) {
+  if(character == 48){
+    return(Serial.print(" "));
+  }else if(character == 49){
+    return(Serial.print("█"));
+  }else{
+    return(Serial.print((char)character));
+  }
+}
+
+DisplayPrint displayPrinter;

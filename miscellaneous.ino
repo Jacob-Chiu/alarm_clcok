@@ -96,7 +96,7 @@ void readSerialCommands(){
     }else if(serialCommand.equals("hello")){
       Serial.println("Hello, how are you?");
     }else if(serialCommand.equals("print screen") && displayOn){
-      u8g2.writeBufferPBM2(Serial);
+      u8g2.writeBufferPBM2(displayPrinter);
     }else{
       Serial.println("Sorry, that was an invalid command. Type 'help' to get a list of commands. Check if the display is on; some commands are invalid if it's off.");
     }
