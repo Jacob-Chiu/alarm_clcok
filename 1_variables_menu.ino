@@ -1,46 +1,37 @@
-const byte NUM_MENUS = 9;
-const byte NUM_MENU_ITEMS = 12;
+const byte NUM_MENUS = 5;
+const byte NUM_MENU_ITEMS = 14;
 
 const String menus[NUM_MENUS][NUM_MENU_ITEMS] = {
-  {"Back", "Alarm", "Timer", "Control"},
-  {"Back", "Set", "Manage"},
-  {"Back", "Year", "Month", "Day", "Time", "Repeat", "Message", "test", "test II", "etc"},
-  {"Back", "Year", "Month", "Day", "Time", "Repeat", "Message"},
-  {"Back", "Set", "Manage"},
-  {"Back", "Year", "Month", "Day", "Time", "Repeat", "Message"},
-  {"Back", "Year", "Month", "Day", "Time", "Repeat", "Message"},
+  {"Back", "Alarm", "Control"},
+  {"Back", "Alarm #", "Hour", "Minute", "Second", "Week Days", "Low Day", "High Day", "Months"},
+  {"Back", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"},
   {"Back", "Off", "Screensaver", "Reset", "Brightness"},
   {"Back", "Confirm reset"}
 };
 
-const String menuNames[NUM_MENUS] = {"home", "timer", "timerSet", "timerManage", "alarm", "alarmSet", "alarmManage", "control", "reset"};
+const String menuNames[NUM_MENUS] = {"home", "alarm", "alarmMonths", "control", "reset"};
 
-const String inArrow = "→";
-const String backArrow = "↶";
-const String nothing = "";
+String inArrow = "→";
+String backArrow = "↶";
+String nothing = "";
 
-const void* right[NUM_MENUS][NUM_MENU_ITEMS] = {
-  {&backArrow, &inArrow, &inArrow, &inArrow},
+void* right[NUM_MENUS][NUM_MENU_ITEMS] = {
   {&backArrow, &inArrow, &inArrow},
-  {&backArrow, &nothing, &nothing, &nothing, &nothing, &nothing, &nothing, &nothing, &nothing, &nothing},
-  {&backArrow, &nothing, &nothing, &nothing, &nothing, &nothing, &nothing},
-  {&backArrow, &inArrow, &inArrow},
-  {&backArrow, &nothing, &nothing, &nothing, &nothing, &nothing, &nothing},
-  {&backArrow, &nothing, &nothing, &nothing, &nothing, &nothing, &nothing},
+  {&backArrow, &currentAlarmNum, &alarms[currentAlarmNum].hr, &alarms[currentAlarmNum].mn, &alarms[currentAlarmNum].sc, &alarms[currentAlarmNum].weekDays, 
+   &alarms[currentAlarmNum].monthDayLow, &alarms[currentAlarmNum].monthDayHigh, &inArrow}, //this element is periodically redefined if currentAlarmNum changes
+  {&backArrow, &alarms[currentAlarmNum].months[0], &alarms[currentAlarmNum].months[1], &alarms[currentAlarmNum].months[2], &alarms[currentAlarmNum].months[3], //this one too
+               &alarms[currentAlarmNum].months[4], &alarms[currentAlarmNum].months[5], &alarms[currentAlarmNum].months[6], &alarms[currentAlarmNum].months[7], //part of the previous line
+               &alarms[currentAlarmNum].months[8], &alarms[currentAlarmNum].months[9], &alarms[currentAlarmNum].months[10], &alarms[currentAlarmNum].months[11]}, //part of the previous line
   {&backArrow, &nothing, &nothing, &nothing, &bright},
   {&backArrow, &nothing}
 };
 
-const int rightType[NUM_MENUS][NUM_MENU_ITEMS] = { //0 = symbol, 1 = string, 2 = integer
-  {0,0,0,0},
-  {0,0,0},
-  {0,1,1,1,1,1,1,1,1,1},
-  {0,1,1,1,1,1,1},
-  {0,0,0},
-  {0,1,1,1,1,1,1},
-  {0,1,1,1,1,1,1},
-  {0,1,1,1,2},
-  {0,1}
+const int rightType[NUM_MENUS][NUM_MENU_ITEMS] = { //0 = symbol, 1 = string, 2 = integer, 3 = byte, 4 = boolean, 5 = day of week
+  {0, 0, 0, 0},
+  {0, 3, 3, 3, 3, 5, 3, 3, 0},
+  {0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
+  {0, 1, 1, 1, 3},
+  {0, 1}
 };
 
 void obeyHome(){
@@ -53,148 +44,38 @@ void obeyHome(){
       setMenu("alarm");
       break;
     case 2:
-      setMenu("timer");
-      break;
-    case 3:
       setMenu("control");
       break;
   }
 }
-void obeyTimer(){
-  switch(currentSelect){
-    case 0:
-      setMenu("home");
-      break;
-    case 1:
-      setMenu("timerSet");
-      break;
-    case 2:
-      setMenu("timerManage");
-      break;
-  }
-}
-void obeyTimerSet(){
-  switch(currentSelect){
-    case 0:
-      setMenu("timer");
-      break;
-    case 1:
-      Serial.println("Year selected");
-      break;
-    case 2:
-      Serial.println("Month selected");
-      break;
-    case 3:
-      Serial.println("Day selected");
-      break;
-    case 4:
-      Serial.println("Time selected");
-      break;
-    case 5:
-      Serial.println("Repeat selected");
-      break;
-    case 6:
-      Serial.println("Message selected");
-      break;
-    case 7:
-      Serial.println("test selected");
-      break;
-    case 8:
-      Serial.println("test II selected");
-      break;
-    case 9:
-      Serial.println("etc selected");
-      break;
-  }
-}
-void obeyTimerManage(){
-  switch(currentSelect){
-   case 0:
-      setMenu("timer");
-      break;
-    case 1:
-      Serial.println("Year selected");
-      break;
-    case 2:
-      Serial.println("Month selected");
-      break;
-    case 3:
-      Serial.println("Day selected");
-      break;
-    case 4:
-      Serial.println("Time selected");
-      break;
-    case 5:
-      Serial.println("Repeat selected");
-      break;
-    case 6:
-      Serial.println("Message selected");
-      break;
-  }
-}
+
 void obeyAlarm(){
   switch(currentSelect){
     case 0:
       setMenu("home");
       break;
-    case 1:
-      setMenu("alarmSet");
+    case 8:
+      setMenu("alarmMonths");
       break;
-    case 2:
-      setMenu("alarmManage");
+    default:
+      editVar = !editVar;
+      drawMenu();
       break;
   }
 }
-void obeyAlarmSet(){
+
+void obeyAlarmMonths(){
   switch(currentSelect){
     case 0:
       setMenu("alarm");
       break;
-    case 1:
-      Serial.println("Year selected");
-      break;
-    case 2:
-      Serial.println("Month selected");
-      break;
-    case 3:
-      Serial.println("Day selected");
-      break;
-    case 4:
-      Serial.println("Time selected");
-      break;
-    case 5:
-      Serial.println("Repeat selected");
-      break;
-    case 6:
-      Serial.println("Message selected");
+    default:  
+      *(bool*)right[currentMenuNumber][currentSelect] = !*(bool*)right[currentMenuNumber][currentSelect]; //it switches when you click
+      drawMenu();
       break;
   }
 }
-void obeyAlarmManage(){
-  switch(currentSelect){
-    case 0:
-      setMenu("alarm");
-      break;
-    case 1:
-      Serial.println("Year selected");
-      break;
-    case 2:
-      Serial.println("Month selected");
-      break;
-    case 3:
-      Serial.println("Day selected");
-      break;
-    case 4:
-      Serial.println("Time selected");
-      break;
-    case 5:
-      Serial.println("Repeat selected");
-      break;
-    case 6:
-      Serial.println("Message selected");
-      break;
-  }
-}
+
 void obeyControl(){
   switch(currentSelect){
     case 0:
@@ -227,4 +108,4 @@ void obeyReset(){
   }
 }
 
-void (*obeyArray[NUM_MENUS])() = {obeyHome, obeyTimer, obeyTimerSet, obeyTimerManage, obeyAlarm, obeyAlarmSet, obeyAlarmManage, obeyControl, obeyReset};
+void (*obeyArray[NUM_MENUS])() = {obeyHome, obeyAlarm, obeyAlarmMonths, obeyControl, obeyReset};

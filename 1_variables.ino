@@ -25,7 +25,7 @@ time_t lastSync = 0;
 Adafruit_7segment matrix = Adafruit_7segment();
 U8G2_ST7920_128X64_F_HW_SPI u8g2(U8G2_R0, /* CS=*/ 15);
 bool displayOn = true;
-int bright = 10;
+byte bright = 10;
 const byte CLOCK_BRIGHT_LEVEL[11] = {0, 1, 2, 3, 4, 5, 6, 7, 9, 12, 15};
 const byte LCD_BRIGHT_LEVEL[11] = {22, 46, 69, 92, 115, 139, 162, 185, 208, 232, 255};
 
@@ -57,6 +57,22 @@ int encoderAmountUp = 0;
 
 bool menuOn = false;
 bool editVar = false;
+
+//alarms
+struct alarm{
+  String message;
+  byte hr;
+  byte mn;
+  byte sc;
+  byte weekDays = 0; //an 8 bit number: the 1st bit is monday, 2nd is tuesday, etc.
+  byte monthDayLow = 1;
+  byte monthDayHigh = 31;
+  bool months[12] = {true, true, true, true, true, true, true, true, true, true, true, true};
+};
+
+const byte NUM_ALARMS = 10;
+alarm alarms[NUM_ALARMS];
+byte currentAlarmNum = 0;
 
 //misc
 String serialCommand = "";

@@ -1,6 +1,7 @@
 void readSerialCommands(){
   if(Serial.available()){
     serialCommand = Serial.readStringUntil('\n');
+    serialCommand.toLowerCase();
     userInputDetected();
     Serial.print("Received Serial command: ");
     Serial.println(serialCommand);
@@ -97,6 +98,25 @@ void readSerialCommands(){
       Serial.println("Hello, how are you?");
     }else if(serialCommand.equals("print screen") && displayOn){
       u8g2.writeBufferPBM2(displayPrinter);
+    }else if(serialCommand.equals("print alarms")){
+      String defaultAlarm = "0000000000131111111111111";
+      for(int i = 0; i < NUM_ALARMS; i++){
+        if(!alarmAsString(&alarms[i]).equals(defaultAlarm)){
+          Serial.print("make alarm ");
+          Serial.print(i);
+          Serial.print(" ");
+          Serial.println(alarmAsString(&alarms[i])); 
+        }
+      } 
+    }else if(serialCommand.equals("print all alarms")){
+      for(int i = 0; i < NUM_ALARMS; i++){
+        Serial.print("make alarm ");
+        Serial.print(i);
+        Serial.print(" ");
+        Serial.println(alarmAsString(&alarms[i])); 
+      } 
+    }else if(serialCommand.substring(0,10).equals("make alarm")){
+      alarms[serialCommand.substring(11, 12).toInt()] = stringToAlarm(serialCommand.substring(13));
     }else{
       Serial.println("Sorry, that was an invalid command. Type 'help' to get a list of commands. Check if the display is on; some commands are invalid if it's off.");
     }

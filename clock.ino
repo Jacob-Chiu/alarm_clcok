@@ -123,19 +123,21 @@ void getNtpTime(){
     timeSynced = true;
   }else{
     Serial.println("Wifi was not connected, getting RTC time instead");
-    WiFi.forceSleepWake();
+    if(second() == 0){
+      WiFi.forceSleepWake();
+    }
     getRtcTime();
     timeSynced = false;
   }
 }
 
 void dstUpdate(){
-  if(month() == 3 && weekday() == 1 && day() >= 8 && day() <= 14){ //Daylight saving starts on the 2nd Sunday of march
+  if(month() == 3 && weekday() == 1 && day() >= 8 && day() <= 14){ //Daylight saving starts on the 2nd Sunday of march "spring forward"
     timeClient.setTimeOffset(-25200);
-    adjustTime(60*60);
-  }else if (month() == 11 && weekday() == 1 && day() <= 7){ //It ends on the 1st sunday of November
+    adjustTime(3600);
+  }else if (month() == 11 && weekday() == 1 && day() <= 7){ //It ends on the 1st sunday of November "fall back"
     timeClient.setTimeOffset(-28800);
-    adjustTime(-60*60);
+    adjustTime(-3600);
   }else{
     return; //exits function immediately
   }

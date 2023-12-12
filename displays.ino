@@ -67,7 +67,7 @@ class DisplayPrint : public Print{
 
 size_t DisplayPrint::write(uint8_t character) {
   if(character == 48){
-    return(Serial.print(" "));
+    return(Serial.print("X"));
   }else if(character == 49){
     return(Serial.print("█"));
   }else{
