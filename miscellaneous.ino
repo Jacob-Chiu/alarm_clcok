@@ -21,6 +21,9 @@ void readSerialCommands(){
       Serial.println(" - 'wifi on' and 'wifi off' to wake/sleep wifi");
       Serial.println(" - 'sync time' to get NTP time");
       Serial.println(" - 'print screen' to print to the serial monitor what's on the lcd");
+      Serial.println(" - 'print alarms' to print alarms as strings");
+      Serial.println(" - 'print all alarms' to print all alarms, including defaults, as strings");
+      Serial.println(" - paste the output of 'print alarms' before last reset into the Serial Monitor to initialize alarms'");
     }else if(serialCommand.equals("get time")){
       serialPrintTime();
     }else if(serialCommand.equals("reset")){
@@ -117,6 +120,8 @@ void readSerialCommands(){
       } 
     }else if(serialCommand.substring(0,10).equals("make alarm")){
       alarms[serialCommand.substring(11, 12).toInt()] = stringToAlarm(serialCommand.substring(13));
+      EEPROM.put(0, alarms);
+      EEPROM.commit();
     }else{
       Serial.println("Sorry, that was an invalid command. Type 'help' to get a list of commands. Check if the display is on; some commands are invalid if it's off.");
     }

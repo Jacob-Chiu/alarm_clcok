@@ -53,6 +53,30 @@ void obeyAlarm(){
   switch(currentSelect){
     case 0:
       setMenu("home");
+      EEPROM.put(0, alarms);
+      EEPROM.commit();
+      break;
+    case 1:
+      editVar = !editVar;
+      drawMenu();
+      right[1][2] = &alarms[currentAlarmNum].hr;
+      right[1][3] = &alarms[currentAlarmNum].mn;
+      right[1][4] = &alarms[currentAlarmNum].sc;
+      right[1][5] = &alarms[currentAlarmNum].weekDays;
+      right[1][6] = &alarms[currentAlarmNum].monthDayLow;
+      right[1][7] = &alarms[currentAlarmNum].monthDayHigh;
+      right[2][1] = &alarms[currentAlarmNum].months[0];
+      right[2][2] = &alarms[currentAlarmNum].months[1];
+      right[2][3] = &alarms[currentAlarmNum].months[2];
+      right[2][4] = &alarms[currentAlarmNum].months[3];
+      right[2][5] = &alarms[currentAlarmNum].months[4];
+      right[2][6] = &alarms[currentAlarmNum].months[5];
+      right[2][7] = &alarms[currentAlarmNum].months[6];
+      right[2][8] = &alarms[currentAlarmNum].months[7];
+      right[2][9] = &alarms[currentAlarmNum].months[8];
+      right[2][10] = &alarms[currentAlarmNum].months[9];
+      right[2][11] = &alarms[currentAlarmNum].months[10];
+      right[2][12] = &alarms[currentAlarmNum].months[11];
       break;
     case 8:
       setMenu("alarmMonths");
@@ -96,6 +120,7 @@ void obeyControl(){
       break;
   }
 }
+
 void obeyReset(){
   switch(currentSelect){
     case 0:

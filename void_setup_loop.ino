@@ -6,6 +6,8 @@ void setup(){
   initializeDisplays();
   initializeToasters();
   initializeEncoder();
+  EEPROM.begin(sizeof(alarms));
+  EEPROM.get(0,alarms);
 }
 
 void loop() {

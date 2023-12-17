@@ -166,12 +166,6 @@ void updateVars(){ //remember to change this if you modify the menus
       changeBright(0);
       break;
     case 1: //alarm
-      right[1][2] = &alarms[currentAlarmNum].hr;
-      right[1][3] = &alarms[currentAlarmNum].mn;
-      right[1][4] = &alarms[currentAlarmNum].sc;
-      right[1][5] = &alarms[currentAlarmNum].weekDays;
-      right[1][6] = &alarms[currentAlarmNum].monthDayLow;
-      right[1][7] = &alarms[currentAlarmNum].monthDayHigh;
       constrainVar(&currentAlarmNum, 0, NUM_ALARMS - 1);
       loopVar(&alarms[currentAlarmNum].hr, 0, 23);
       loopVar(&alarms[currentAlarmNum].mn, 0, 59);

@@ -60,7 +60,7 @@ bool editVar = false;
 
 //alarms
 struct alarm{
-  String message;
+  char message[50];
   byte hr;
   byte mn;
   byte sc;

@@ -29,3 +29,6 @@
 
 //Serialwombat
 #include <SerialWombat.h>
+
+//EEPROM
+#include <EEPROM.h>
